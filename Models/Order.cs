@@ -1,4 +1,6 @@
-﻿namespace hhpizza_backend.Models;
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace hhpizza_backend.Models;
 
 public class Order
 {
@@ -11,7 +13,7 @@ public class Order
     public string PaymentType { get; set; }
     public decimal Tip { get; set; }
     public int? Review {  get; set; }
-    public User User { get; set; }
+    public int UserId { get; set; }
     public ICollection<Item> Items { get; set; }
 
 }

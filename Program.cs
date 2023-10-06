@@ -47,7 +47,26 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//   ENDPOINTS
 
+// POST Order
+app.MapPost("/api/order", (HHPizzaDbContext db, Order order) =>
+{
+    db.Orders.Add(order);
+    db.SaveChanges();
+    return Results.Created($"/api/order/{order.Id}", order);
+});
+
+//CHECK USER EXISTS
+app.MapGet("/api/checkuser/{uid}", (HHPizzaDbContext db, string uid) =>
+{
+    var userExists = db.Users.Where(x => x.Uid == uid).FirstOrDefault();
+    if (userExists == null)
+    {
+        return Results.StatusCode(204);
+    }
+    return Results.Ok(userExists);
+});
 
 
 

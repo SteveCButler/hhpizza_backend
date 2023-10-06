@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using hhpizza_backend.Models;
@@ -11,9 +12,10 @@ using hhpizza_backend.Models;
 namespace hhpizza_backend.Migrations
 {
     [DbContext(typeof(HHPizzaDbContext))]
-    partial class HHPizzaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231006004305_updateOrder")]
+    partial class updateOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
