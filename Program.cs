@@ -60,6 +60,21 @@ app.MapGet("/api/checkuser/{uid}", (HHPizzaDbContext db, string uid) =>
     return Results.Ok(userExists);
 });
 
+//Create a User
+app.MapPost("/api/user", (HHPizzaDbContext db, User user) =>
+{
+    db.Users.Add(user);
+    db.SaveChanges();
+    return Results.Created($"/api/user/{user.Id}", user);
+});
+
+//Get user by id
+app.MapGet("/api/user/{id}", (HHPizzaDbContext db, int id) =>
+{
+    var user = db.Users.Single(u => u.Id == id);
+    return user;
+});
+
 // GET ALL Orders
 app.MapGet("/api/order", (HHPizzaDbContext db) =>
 {
@@ -88,6 +103,42 @@ app.MapDelete("/api/order/{id}", (HHPizzaDbContext db, int id) =>
 
 });
 
+//Items
+//Delete an Item
+app.MapDelete("/api/product/{id}", (HHPizzaDbContext db, int id) =>
+{
+    Item item = db.Items.SingleOrDefault(p => p.Id == id);
+    if (item == null)
+    {
+        return Results.NotFound();
+    }
+    db.Items.Remove(item);
+    db.SaveChanges();
+    return Results.NoContent();
+
+});
+//Update an Item
+app.MapPut("/api/Products/{id}", (HHPizzaDbContext db, int id, Item item) =>
+{
+    Item itemToUpdate = db.Items.SingleOrDefault(product => product.Id == id);
+    if (itemToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    itemToUpdate.Name = item.Name;
+    itemToUpdate.Price = item.Price;
+
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+//Add an item
+app.MapPost("/api/products", (HHPizzaDbContext db, Item item) =>
+{
+    db.Items.Add(item);
+    db.SaveChanges();
+    return Results.Created($"/api/products/{item.Id}", item);
+});
 
 
 
