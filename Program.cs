@@ -81,6 +81,12 @@ app.MapGet("/api/order", (HHPizzaDbContext db) =>
     return db.Orders.ToList();
 });
 
+// GET Order by Id
+app.MapGet("/api/orderDetails/{id}", (HHPizzaDbContext db, int id) =>
+{
+    var order = db.Orders.Where(x =>x.Id == id).Include(x => x.Items).FirstOrDefault();
+});
+
 // POST Order
 app.MapPost("/api/order", (HHPizzaDbContext db, Order order) =>
 {
