@@ -60,10 +60,37 @@ app.MapGet("/api/validateUser/{uid}", (HHPizzaDbContext db, string uid) =>
     return Results.Ok(userExists);
 });
 
+//Create a User
+app.MapPost("/api/user", (HHPizzaDbContext db, User user) =>
+{
+    db.Users.Add(user);
+    db.SaveChanges();
+    return Results.Created($"/api/user/{user.Id}", user);
+});
+
+//Get user by id
+app.MapGet("/api/user/{id}", (HHPizzaDbContext db, int id) =>
+{
+    var user = db.Users.Single(u => u.Id == id);
+    return user;
+});
+
 // GET ALL Orders
 app.MapGet("/api/order", (HHPizzaDbContext db) =>
 {
     return db.Orders.ToList();
+});
+
+// GET Order by Id
+app.MapGet("/api/orderDetails/{id}", (HHPizzaDbContext db, int id) =>
+{
+    var order = db.Orders.Where(x =>x.Id == id).Include(x => x.Items).FirstOrDefault();
+    if(order == null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(order);
 });
 
 // POST Order
@@ -108,6 +135,42 @@ app.MapDelete("/api/order/{id}", (HHPizzaDbContext db, int id) =>
 
 });
 
+//Items
+//Delete an Item
+app.MapDelete("/api/item/{id}", (HHPizzaDbContext db, int id) =>
+{
+    Item item = db.Items.SingleOrDefault(p => p.Id == id);
+    if (item == null)
+    {
+        return Results.NotFound();
+    }
+    db.Items.Remove(item);
+    db.SaveChanges();
+    return Results.NoContent();
+
+});
+//Update an Item
+app.MapPut("/api/item/{id}", (HHPizzaDbContext db, int id, Item item) =>
+{
+    Item itemToUpdate = db.Items.SingleOrDefault(product => product.Id == id);
+    if (itemToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    itemToUpdate.Name = item.Name;
+    itemToUpdate.Price = item.Price;
+
+    db.SaveChanges();
+    return Results.NoContent();
+});
+
+//Add an item
+app.MapPost("/api/item", (HHPizzaDbContext db, Item item) =>
+{
+    db.Items.Add(item);
+    db.SaveChanges();
+    return Results.Created($"/api/products/{item.Id}", item);
+});
 
 
 

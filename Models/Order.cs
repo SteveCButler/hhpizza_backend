@@ -10,8 +10,8 @@ public class Order
     public string CustomerPhone { get; set; }
     public string CustomerEmail { get; set; }
     public string OrderType { get; set; }
-    public string PaymentType { get; set; }
-    public decimal Tip { get; set; }
+    public string? PaymentType { get; set; }
+    public decimal? Tip { get; set; }
     public int? Review {  get; set; }
     public int UserId { get; set; }
     public ICollection<Item> Items { get; set; }
