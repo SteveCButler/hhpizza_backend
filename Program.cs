@@ -85,6 +85,12 @@ app.MapGet("/api/order", (HHPizzaDbContext db) =>
 app.MapGet("/api/orderDetails/{id}", (HHPizzaDbContext db, int id) =>
 {
     var order = db.Orders.Where(x =>x.Id == id).Include(x => x.Items).FirstOrDefault();
+    if(order == null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(order);
 });
 
 // POST Order
@@ -131,7 +137,7 @@ app.MapDelete("/api/order/{id}", (HHPizzaDbContext db, int id) =>
 
 //Items
 //Delete an Item
-app.MapDelete("/api/product/{id}", (HHPizzaDbContext db, int id) =>
+app.MapDelete("/api/item/{id}", (HHPizzaDbContext db, int id) =>
 {
     Item item = db.Items.SingleOrDefault(p => p.Id == id);
     if (item == null)
@@ -144,7 +150,7 @@ app.MapDelete("/api/product/{id}", (HHPizzaDbContext db, int id) =>
 
 });
 //Update an Item
-app.MapPut("/api/Products/{id}", (HHPizzaDbContext db, int id, Item item) =>
+app.MapPut("/api/item/{id}", (HHPizzaDbContext db, int id, Item item) =>
 {
     Item itemToUpdate = db.Items.SingleOrDefault(product => product.Id == id);
     if (itemToUpdate == null)
@@ -159,7 +165,7 @@ app.MapPut("/api/Products/{id}", (HHPizzaDbContext db, int id, Item item) =>
 });
 
 //Add an item
-app.MapPost("/api/products", (HHPizzaDbContext db, Item item) =>
+app.MapPost("/api/item", (HHPizzaDbContext db, Item item) =>
 {
     db.Items.Add(item);
     db.SaveChanges();
