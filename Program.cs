@@ -50,7 +50,7 @@ app.UseHttpsRedirection();
 //   ENDPOINTS
 
 //CHECK USER EXISTS
-app.MapGet("/api/checkuser/{uid}", (HHPizzaDbContext db, string uid) =>
+app.MapGet("/api/validateUser/{uid}", (HHPizzaDbContext db, string uid) =>
 {
     var userExists = db.Users.Where(x => x.Uid == uid).FirstOrDefault();
     if (userExists == null)
@@ -87,6 +87,26 @@ app.MapPost("/api/order", (HHPizzaDbContext db, Order order) =>
     db.Orders.Add(order);
     db.SaveChanges();
     return Results.Created($"/api/order/{order.Id}", order);
+});
+
+// PUT (update) Order
+app.MapPut("/api/order/{id}", (HHPizzaDbContext db, int id, Order order) =>
+{
+    Order orderToUpdate = db.Orders.Where(x =>x.Id == id).FirstOrDefault();
+
+    if(orderToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+
+    orderToUpdate.Name = order.Name;
+    orderToUpdate.CustomerPhone = order.CustomerPhone;
+    orderToUpdate.CustomerEmail = order.CustomerEmail;
+    orderToUpdate.OrderType = order.OrderType;
+
+    db.SaveChanges();
+    return Results.NoContent();
+
 });
 
 // DELETE Order
