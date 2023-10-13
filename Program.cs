@@ -173,6 +173,37 @@ app.MapPost("/api/item", (HHPizzaDbContext db, Item item) =>
 });
 
 
+app.MapPost("/api/item/{orderId}", (HHPizzaDbContext db, Item newItem, int orderId) =>
+{
+    try
+    {
+        var existingOrder = db.Orders
+            .Include(o => o.Items)
+            .FirstOrDefault(o => o.Id == orderId);
+
+        if (existingOrder == null)
+        {
+            Console.WriteLine("Order not found");
+            return false;
+        }
+
+        // Set the order ID for the new item
+        newItem.Orders = new List<Order> { existingOrder };
+
+        db.Items.Add(newItem);
+        db.SaveChanges();
+
+        Console.WriteLine("Item added to the order successfully.");
+        return true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+        return false;
+    }
+
+});
+
 
 
 app.Run();
