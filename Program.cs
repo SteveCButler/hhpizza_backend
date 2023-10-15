@@ -81,6 +81,13 @@ app.MapGet("/api/order", (HHPizzaDbContext db) =>
     return db.Orders.ToList();
 });
 
+//Get Closed Orders
+// GET ALL Orders
+app.MapGet("/api/closed-orders", (HHPizzaDbContext db) =>
+{
+    return db.Orders.Where(x => x.Status == "closed").ToList();
+});
+
 // GET Order by Id
 app.MapGet("/api/orderDetails/{id}", (HHPizzaDbContext db, int id) =>
 {
@@ -121,6 +128,26 @@ app.MapPut("/api/order/{id}", (HHPizzaDbContext db, int id, Order order) =>
 
 });
 
+//Close Order
+app.MapPut("/api/close-order/{id}", (HHPizzaDbContext db, int id, Order order) =>
+{
+    Order orderToUpdate = db.Orders.Where(x => x.Id == id).FirstOrDefault();
+
+    if (orderToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+
+    orderToUpdate.PaymentType = order.PaymentType;
+    orderToUpdate.Tip = order.Tip;
+    orderToUpdate.Status = order.Status;
+    orderToUpdate.OrderTotal = order.OrderTotal;
+
+    db.SaveChanges();
+    return Results.NoContent();
+
+});
+
 // DELETE Order
 app.MapDelete("/api/order/{id}", (HHPizzaDbContext db, int id) =>
 {
@@ -136,6 +163,19 @@ app.MapDelete("/api/order/{id}", (HHPizzaDbContext db, int id) =>
 });
 
 //Items
+
+//GET Item by id
+app.MapGet("/api/item/{id}", (HHPizzaDbContext db, int id) =>
+{
+    var item = db.Items.Where(x => x.Id == id).FirstOrDefault();
+    if (item == null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(item);
+});
+
 //Delete an Item
 app.MapDelete("/api/item/{id}", (HHPizzaDbContext db, int id) =>
 {
