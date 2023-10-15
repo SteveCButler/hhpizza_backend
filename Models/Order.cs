@@ -14,6 +14,7 @@ public class Order
     public decimal? Tip { get; set; }
     public int? Review {  get; set; }
     public int UserId { get; set; }
+    public decimal? OrderTotal { get; set; }
     public ICollection<Item> Items { get; set; }
 
 }
