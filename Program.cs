@@ -142,6 +142,7 @@ app.MapPut("/api/close-order/{id}", (HHPizzaDbContext db, int id, Order order) =
     orderToUpdate.Tip = order.Tip;
     orderToUpdate.Status = order.Status;
     orderToUpdate.OrderTotal = order.OrderTotal;
+    orderToUpdate.Review = order.Review;
 
     db.SaveChanges();
     return Results.NoContent();
