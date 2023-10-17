@@ -148,15 +148,21 @@ app.MapPut("/api/close-order/{id}", (HHPizzaDbContext db, int id, Order order) =
 
 });
 
+
+
 // DELETE Order
 app.MapDelete("/api/order/{id}", (HHPizzaDbContext db, int id) =>
 {
-    var orderToDelete = db.Orders.Where(x =>x.Id == id).FirstOrDefault();
-    if(orderToDelete == null)
+    var order = db.Orders.Where(x => x.Id == id).Include(x => x.Items).FirstOrDefault();
+    if (order == null)
     {
         return Results.NotFound();
     }
-    db.Orders.Remove(orderToDelete);
+    foreach (var item in order.Items)
+    {
+        db.Items.Remove(item);
+    }
+    db.Orders.Remove(order);
     db.SaveChanges();
     return Results.NoContent();
 
@@ -213,18 +219,18 @@ app.MapPost("/api/item", (HHPizzaDbContext db, Item item) =>
 });
 
 
+
 app.MapPost("/api/item/{orderId}", (HHPizzaDbContext db, Item newItem, int orderId) =>
 {
-    try
-    {
+    
         var existingOrder = db.Orders
             .Include(o => o.Items)
             .FirstOrDefault(o => o.Id == orderId);
 
         if (existingOrder == null)
         {
-            Console.WriteLine("Order not found");
-            return false;
+            
+            return Results.NotFound();
         }
 
         // Set the order ID for the new item
@@ -233,14 +239,9 @@ app.MapPost("/api/item/{orderId}", (HHPizzaDbContext db, Item newItem, int order
         db.Items.Add(newItem);
         db.SaveChanges();
 
-        Console.WriteLine("Item added to the order successfully.");
-        return true;
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error: {ex.Message}");
-        return false;
-    }
+    return Results.Created($"/api/item/{orderId}", newItem);
+
+     
 
 });
 
