@@ -82,10 +82,19 @@ app.MapGet("/api/order", (HHPizzaDbContext db) =>
 });
 
 //Get Closed Orders
-// GET ALL Orders
+
 app.MapGet("/api/closed-orders", (HHPizzaDbContext db) =>
 {
     return db.Orders.Where(x => x.Status == "closed").ToList();
+});
+
+//Get Closed Orders
+
+app.MapGet("/api/revenue", (HHPizzaDbContext db) =>
+{
+    var closedOrders =  db.Orders.Where(x => x.Status == "closed").ToList();
+    var sum = closedOrders.Sum(x => x.OrderTotal);
+    return sum;
 });
 
 // GET Order by Id
