@@ -94,7 +94,8 @@ app.MapGet("/api/revenue", (HHPizzaDbContext db) =>
 {
     var closedOrders =  db.Orders.Where(x => x.Status == "closed").ToList();
     var sum = closedOrders.Sum(x => x.OrderTotal);
-    return sum;
+    var tips = closedOrders.Sum(t => t.Tip);
+    return Results.Ok(new { sum, tips });
 });
 
 // GET Order by Id
